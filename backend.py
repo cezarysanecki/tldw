@@ -72,3 +72,7 @@ def summarize_video(url):
 
     except Exception as e:
         return f"An error occurred: {str(e)}"
+
+if __name__ == '__main__':
+    result = summarize_video('https://www.youtube.com/watch?v=7b9hfk0Da68')
+    print(result)
