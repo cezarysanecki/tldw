@@ -38,15 +38,16 @@ class VideoExtractor:
             'no-playlist': True
         }
 
-    def get_captions_by_priority(self, info: Dict) -> Optional[Dict]:
+    def get_captions_by_priority(self, subtitles, automatic_captions) -> Optional[Dict]:
         """
         Get captions based on priority order:
         1. Manual subtitles (en-US, en-CA, en-*)
         2. Automatic captions (en-orig, en-US, en-CA, en)
         
         Args:
-            info: Video information dictionary from yt-dlp
-            
+            subtitles: Video subtitles from yt-dlp
+            automatic_captions: Video automatic captions from yt-dlp
+
         Returns:
             Caption json blob (fields ext, url, name)
         """
@@ -58,26 +59,26 @@ class VideoExtractor:
         caption_track = None
 
         # Check manual subtitles first
-        if info.get('subtitles'):
+        if subtitles:
             # Check specific language variants first
             for lang in subtitle_priorities:
-                if lang in info['subtitles']:
-                    caption_track = info['subtitles'][lang]
+                if lang in subtitles:
+                    caption_track = subtitles[lang]
                     break
 
             # Then check for any other en-* variants
             else:
-                for lang in info['subtitles'].keys():
+                for lang in subtitles.keys():
                     if lang.startswith('en-'):
-                        caption_track = info['subtitles'][lang]
+                        caption_track = subtitles[lang]
                         break
 
         # Check automatic captions if no manual subtitles found
         if not caption_track:
-            if info.get('automatic_captions'):
+            if automatic_captions:
                 for lang in auto_caption_priorities:
-                    if lang in info['automatic_captions']:
-                        caption_track = info['automatic_captions'][lang]
+                    if lang in automatic_captions:
+                        caption_track = automatic_captions[lang]
                         break
 
         if not caption_track:

@@ -17,6 +17,14 @@ def summarize_video(url):
 
         video_id = video_info.get('id')
         duration = video_info.get('duration')
+        video_title = video_info.get("fulltitle")
+        video_description = video_info.get("description")
+        aspect_ratio = video_info.get('aspect_ratio', 1.78)
+        webpage_url = video_info.get('webpage_url', 'https://www.youtube.com/watch?v=' + video_id)
+        thumbnails = video_info.get('thumbnails', [])
+        title = video_info.get('title', '')
+        subtitles = video_info.get('subtitles')
+        automatic_captions = video_info.get('automatic_captions')
 
         # If video too long, reject
         print(f'Video id: {video_id}, duration: {duration} = {duration // 60}:{duration % 60:02}')
@@ -24,7 +32,7 @@ def summarize_video(url):
             return "Too long video"
 
         # Get captions
-        caption_track = extractor.get_captions_by_priority(video_info)
+        caption_track = extractor.get_captions_by_priority(subtitles, automatic_captions)
         if not caption_track:
             return f'Captions are not available for video {video_id}'
         ext = caption_track['ext']
@@ -40,28 +48,22 @@ def summarize_video(url):
         print(f'Caption length: {len(caption_text)}')
 
         # Generate summaries
-        video_title = video_info.get("fulltitle")
-        video_description = video_info.get("description")
         summaries = summarizer.summarize(caption_text, video_title, video_description)
 
         if not summaries:
             return "Failed to summarize"
 
-        # Get the thumbnail with highest preference
-        thumbnails = video_info.get('thumbnails', [])
+        # Get the thumbnail with the highest preference
         thumbnail_url = None
         if thumbnails:
             best_thumbnail = max(thumbnails, key=lambda x: x.get('preference', 0))
             thumbnail_url = best_thumbnail.get('url')
 
-        aspect_ratio = video_info.get('aspect_ratio', 1.78)
-        webpage_url = video_info.get('webpage_url', 'https://www.youtube.com/watch?v=' + video_id)
-
         return {
             "success": True,
             "error": "",
             "video_id": video_id,
-            "title": video_info.get('title', ''),
+            "title": title,
             "thumbnail_url": thumbnail_url,
             "aspect_ratio": aspect_ratio,
             "webpage_url": webpage_url,
