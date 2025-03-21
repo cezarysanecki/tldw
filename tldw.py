@@ -1,17 +1,13 @@
-from video_summarizer import Summarizer
-from youtube import VideoExtractor, is_youtube_link
+from youtube import YoutubeVideoInfoExtractor
+from youtube_captions import YoutubeVideoCaptionsExtractor
+from youtube_summarizer import YoutubeSummarizer
 
 
 def summarize_video(url):
-    if not is_youtube_link(url):
-        return "Invalid YouTube URL"
-
     try:
-        extractor = VideoExtractor()
-        summarizer = Summarizer()
-
         # Download metadata
-        video_info = extractor.extract_video_info(url)
+        youtube_video_info_extractor = YoutubeVideoInfoExtractor()
+        video_info = youtube_video_info_extractor.extract_video_info(url)
         if not video_info:
             return "Failed to download video info"
 
@@ -27,37 +23,22 @@ def summarize_video(url):
         automatic_captions = video_info.get('automatic_captions')
 
         # If video too long, reject
-        print(f'Video id: {video_id}, duration: {duration} = {duration // 60}:{duration % 60:02}')
         if duration >= 7200:
             return "Too long video"
 
         # Get captions
-        caption_track = extractor.get_captions_by_priority(subtitles, automatic_captions)
-        if not caption_track:
+        youtube_video_captions_extractor = YoutubeVideoCaptionsExtractor()
+        caption_text = youtube_video_captions_extractor.prepare_captions(video_id, subtitles, automatic_captions)
+        if not caption_text:
             return f'Captions are not available for video {video_id}'
-        ext = caption_track['ext']
-
-        print(f'Using captions track: {caption_track["name"]} ({ext})')
-
-        # Download captions
-        downloaded_content = extractor.download_captions(video_id, caption_track)
-
-        # Parse captions
-        caption_text = extractor.parse_captions(ext, downloaded_content)
-
-        print(f'Caption length: {len(caption_text)}')
 
         # Generate summaries
-        summaries = summarizer.summarize(video_id, caption_text, video_title, video_description)
-
+        youtube_summarizer = YoutubeSummarizer()
+        summaries = youtube_summarizer.summarize(video_id, caption_text, video_title, video_description)
         if not summaries:
             return "Failed to summarize"
 
-        # Get the thumbnail with the highest preference
-        thumbnail_url = None
-        if thumbnails:
-            best_thumbnail = max(thumbnails, key=lambda x: x.get('preference', 0))
-            thumbnail_url = best_thumbnail.get('url')
+        thumbnail_url = prepare_thumbnail_url(thumbnails)
 
         return {
             "success": True,
@@ -73,6 +54,15 @@ def summarize_video(url):
     except Exception as e:
         return f"An error occurred: {str(e)}"
 
+
+def prepare_thumbnail_url(thumbnails):
+    if thumbnails:
+        best_thumbnail = max(thumbnails, key=lambda x: x.get('preference', 0))
+        return best_thumbnail.get('url')
+    return None
+
+
 if __name__ == '__main__':
-    result = summarize_video('https://www.youtube.com/watch?v=7b9hfk0Da68')
+    result = summarize_video('https://www.youtube.com/watch?v=-3INrcNfzcU')
+    print("=== RESULT ===")
     print(result)

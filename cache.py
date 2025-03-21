@@ -11,15 +11,24 @@ def ensure_cache_dir():
         raise ValueError(f'{CACHE_DIR} is not a directory')
 
 
-def reuse_cache(video_id, extension):
-    cache_file = os.path.join(CACHE_DIR, f'{video_id}.{extension}')
+def reuse_cache_json(video_id):
+    cache_file = os.path.join(CACHE_DIR, f'{video_id}.json')
 
     if os.path.isfile(cache_file):
         print(f'Reusing cached file: {cache_file}')
 
-        if extension == "json":
-            return json.load(open(cache_file))
-        return open(cache_file).read()
+        return json.load(open(cache_file))
+    return None
+
+
+def reuse_cache_txt(video_id):
+    cache_file = os.path.join(CACHE_DIR, f'{video_id}.txt')
+
+    if os.path.isfile(cache_file):
+        print(f'Reusing cached file: {cache_file}')
+
+        with open(cache_file, "r", encoding="utf-8") as f:
+            return f.read()
     return None
 
 
@@ -29,7 +38,7 @@ def create_cache_json(video_id, content):
         json.dump(content, f, indent=4)
 
 
-def create_cache(video_id, extension, content):
-    cache_file = os.path.join(CACHE_DIR, f'{video_id}.{extension}')
-    with open(cache_file, 'w') as f:
+def create_cache_txt(video_id, content):
+    cache_file = os.path.join(CACHE_DIR, f'{video_id}.txt')
+    with open(cache_file, 'w', encoding="utf-8") as f:
         f.write(content)

@@ -2,10 +2,10 @@ from urllib.parse import quote_plus
 
 from openai import OpenAI
 
-from cache import ensure_cache_dir, reuse_cache, create_cache_json
+from cache import ensure_cache_dir, create_cache_json, reuse_cache_json
 
 
-class Summarizer:
+class YoutubeSummarizer:
     def __init__(self):
         ensure_cache_dir()
 
@@ -13,7 +13,9 @@ class Summarizer:
         self.messages = []
 
     def summarize(self, video_id, subtitles, video_title, video_description):
-        result = reuse_cache(f'{video_id}_response', 'json')
+        print("=== SUMMARIZING VIDEO ===")
+
+        result = reuse_cache_json(f'{video_id}_response')
         if result:
             return result
 
