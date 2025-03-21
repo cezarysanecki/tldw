@@ -2,13 +2,21 @@ from urllib.parse import quote_plus
 
 from openai import OpenAI
 
+from cache import ensure_cache_dir, reuse_cache, create_cache_json
+
 
 class Summarizer:
     def __init__(self):
+        ensure_cache_dir()
+
         self.client = OpenAI()
         self.messages = []
 
-    def summarize(self, subtitles, video_title, video_description):
+    def summarize(self, video_id, subtitles, video_title, video_description):
+        result = reuse_cache(f'{video_id}_response', 'json')
+        if result:
+            return result
+
         paragraph = self.ask_assistant_persisting(
             f"Summarize this video given its subtitles into increasing levels of conciseness. Begin by summarizing it into a single paragraph.\nTitle: {video_title}\nDescription:\n```{video_description}```\n\nDo not describe or mention the video itself. Simply summarize the points it makes. Focus on the overall or underlying takeaway, cause, reason, or answer BEYOND what's already in the title and description, which is already shown to the user. PROVIDE NO OTHER OUTPUT OTHER THAN THE PARAGRAPH.\nSubtitles follow: {subtitles}")
         sentence = self.ask_assistant_persisting(
@@ -20,13 +28,17 @@ class Summarizer:
         search_term = self.ask_assistant_persisting(
             'Now suggest a search term for a Wikipedia search that replaces watching the video. Make the search SPECIFIC to the TOPIC of the video. For example: "The $6 Billion Transit Project with No Ridership" -> "FasTracks"; "Why NOBODY lives in this part of China" -> "Gobi Desert"; "This unknown professor REVOLUTIONIZED ..." -> "Joseph-Louis Lagrange"; "Every Computer Can Be Hacked!" -> "Zero-Day Vulnerability"; Provide the Wikipedia page name with no special punctuation:')
 
-        return {
+        response = {
             'paragraph': paragraph,
             'sentence': sentence,
             'question': question,
             'word': f'{word} ({search_term})',
             'wikipedia': 'https://en.wikipedia.org/w/index.php?search=' + quote_plus(search_term)
         }
+
+        create_cache_json(f'{video_id}_response', response)
+
+        return response
 
     def ask_assistant_persisting(self, instruction):
         self.messages.append(

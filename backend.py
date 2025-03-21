@@ -48,7 +48,7 @@ def summarize_video(url):
         print(f'Caption length: {len(caption_text)}')
 
         # Generate summaries
-        summaries = summarizer.summarize(caption_text, video_title, video_description)
+        summaries = summarizer.summarize(video_id, caption_text, video_title, video_description)
 
         if not summaries:
             return "Failed to summarize"

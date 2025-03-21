@@ -1,4 +1,3 @@
-import os
 import re
 from typing import Dict, Optional, Tuple
 
@@ -7,14 +6,7 @@ import webvtt
 import yt_dlp
 from yt_dlp.utils import YoutubeDLError
 
-CACHE_DIR = './cache'
-
-
-def ensure_cache_dir():
-    if not os.path.exists(CACHE_DIR):
-        os.makedirs(CACHE_DIR, exist_ok=True)
-    if not os.path.isdir(CACHE_DIR):
-        raise ValueError(f'{CACHE_DIR} is not a directory')
+from cache import ensure_cache_dir, reuse_cache, create_cache, create_cache_json
 
 
 def is_youtube_link(url: str) -> bool:
@@ -27,6 +19,8 @@ def is_youtube_link(url: str) -> bool:
 
 class VideoExtractor:
     def __init__(self):
+        ensure_cache_dir()
+
         self.ydl_opts = {
             'writesubtitles': True,
             'writeannotations': True,
@@ -98,18 +92,17 @@ class VideoExtractor:
     def download_captions(self, video_id: str, caption_obj: Dict) -> str:
         ext = caption_obj['ext']
         url = caption_obj['url']
-        cache_file = os.path.join(CACHE_DIR, video_id + '.' + ext)
 
-        if os.path.isfile(cache_file):
-            return open(cache_file).read()
+        result = reuse_cache(video_id, ext)
+        if result:
+            return result
 
         # Download caption content
         response = requests.get(url)
         response.raise_for_status()
         content = response.text
 
-        with open(cache_file, 'w') as f:
-            f.write(content)
+        create_cache(video_id, ext, content)
 
         return content
 
@@ -275,10 +268,9 @@ class VideoExtractor:
 
         video_id = yt_dlp.extractor.youtube.YoutubeIE.extract_id(url)
 
-        cache_file = os.path.join(CACHE_DIR, video_id + '.json')
-        if os.path.isfile(cache_file):
-            print(f'Reusing cached file: {cache_file}')
-            return json.load(open(cache_file))
+        result = reuse_cache(video_id, 'json')
+        if result:
+            return result
 
         try:
             with yt_dlp.YoutubeDL(self.ydl_opts) as ydl:
@@ -288,7 +280,6 @@ class VideoExtractor:
             print(f"Error extracting video information: {str(e)}")
             return None, None
 
-        with open(cache_file, 'w') as f:
-            json.dump(video_info, f, indent=4)
+        create_cache_json(video_id, video_info)
 
         return video_info
