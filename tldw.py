@@ -1,7 +1,9 @@
+import sys
 from youtube import YoutubeVideoInfoExtractor
 from youtube_captions import YoutubeVideoCaptionsExtractor
 from youtube_summarizer import YoutubeSummarizer
 
+url = sys.argv[1]
 
 def summarize_video(url):
     try:
@@ -62,7 +64,6 @@ def prepare_thumbnail_url(thumbnails):
     return None
 
 
-if __name__ == '__main__':
-    result = summarize_video('https://www.youtube.com/watch?v=-3INrcNfzcU')
-    print("=== RESULT ===")
-    print(result)
+summarize = summarize_video(url)
+
+print(summarize)
