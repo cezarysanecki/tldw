@@ -18,4 +18,4 @@ RUN pip3 install -r requirements.txt --break-system-packages
 COPY . /app/
 
 # Command to run the application
-CMD ["python3", "./backend.py", "--port", "80"]
+CMD ["python3", "./backend.py", "--port", "5555"]
