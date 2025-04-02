@@ -22,7 +22,7 @@ def summarize_video(url):
     automatic_captions = video_info.get('automatic_captions')
 
     # If video too long, reject
-    if duration >= 7200:
+    if duration >= 9000:
         return "Too long video"
 
     # Get captions
