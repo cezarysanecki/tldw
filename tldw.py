@@ -8,7 +8,7 @@ def summarize_video(url):
     youtube_video_info_extractor = YoutubeVideoInfoExtractor()
     video_info = youtube_video_info_extractor.extract_video_info(url)
     if not video_info:
-        return "Failed to download video info"
+        return {"error": "Failed to download video info"}
 
     video_id = video_info.get('id')
     duration = video_info.get('duration')
@@ -23,13 +23,13 @@ def summarize_video(url):
 
     # If video too long, reject
     if duration >= 9000:
-        return "Too long video"
+        return {"error": "Too long video"}
 
     # Get captions
     youtube_video_captions_extractor = YoutubeVideoCaptionsExtractor()
     caption_text = youtube_video_captions_extractor.prepare_captions(video_id, subtitles, automatic_captions)
     if not caption_text:
-        return f'Captions are not available for video {video_id}'
+        return {"error": f'Captions are not available for video {video_id}'}
 
     # Generate summaries
     youtube_summarizer = YoutubeSummarizer()
