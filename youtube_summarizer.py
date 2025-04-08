@@ -29,10 +29,13 @@ class YoutubeSummarizer:
         #     'Answer the question we just asked with just a single phrase, ideally one or two words. Examples: "Is EVOLUTION REAL?" -> "Yes." "Have scientists achieved fusion?" -> "No." "It depends." "Will AI take over the world?" -> "Nobody knows." "Why NO ONE lives here" -> "Poor geography." "Inside Disney\'s $1 BILLION disaster" -> "No market need." "Scientists FEAR this one thing" -> "Climate change." "Why is there war in the middle east?" -> "It\'s complicated." "Have we unlocked the secret to QUANTUM COMPUTING?" -> "Not really." "A day from Hell" -> "1999 Moore tornado" ... -> "Mostly." ... -> "Usually." PROVIDE NO OTHER OUTPUT OTHER THAN THE WORD(S) OF THE ANSWER.')
         # search_term = self.ask_assistant_persisting(
         #     'Now suggest a search term for a Wikipedia search that replaces watching the video. Make the search SPECIFIC to the TOPIC of the video. For example: "The $6 Billion Transit Project with No Ridership" -> "FasTracks"; "Why NOBODY lives in this part of China" -> "Gobi Desert"; "This unknown professor REVOLUTIONIZED ..." -> "Joseph-Louis Lagrange"; "Every Computer Can Be Hacked!" -> "Zero-Day Vulnerability"; Provide the Wikipedia page name with no special punctuation:')
+        paragraph_pl = self.ask_assistant_persisting(
+            f"Translate below text from English to Polish. Under no circumstances DO NOT change content, just provide translation.\n---\n{paragraph}")
 
         response = {
             'title': video_title,
             'paragraph': paragraph,
+            'paragraph_pl': paragraph_pl,
             # 'sentence': sentence,
             # 'question': question,
             # 'word': f'{word} ({search_term})',
