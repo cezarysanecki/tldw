@@ -1,5 +1,5 @@
-from tldr.article_content import ArticleContentExtractor
-from tldr.article_summarizer import ArticleContentSummarizer
+from article_content import ArticleContentExtractor
+from article_summarizer import ArticleContentSummarizer
 
 
 def summarize_article(url):

@@ -7,6 +7,7 @@ import dotenv
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 
+from article.tldr import summarize_article
 from youtube.tldw import summarize_video
 
 app = Flask(__name__)
@@ -62,7 +63,7 @@ def health_check():
 
 @app.route('/api/article/summarize', methods=['POST'])
 @rate_limit()
-def summarize_article():
+def handle_summarize_article():
     try:
         data = request.get_json()
         print(f"Handling: {data}")
@@ -85,7 +86,7 @@ def summarize_article():
 
 @app.route('/api/summarize', methods=['POST'])
 @rate_limit()
-def summarize_video_api():
+def handle_summarize_video():
     try:
         data = request.get_json()
 
