@@ -19,10 +19,12 @@ class ArticleContentExtractor:
             raise e
 
     def run(self):
-        return {
+        result = {
             "title": self.__find_title(),
             "content": self.__find_content()
         }
+        print(f"Result: {result}")
+        return result
 
     def __find_title(self):
         if self.soup.find('h1'):
