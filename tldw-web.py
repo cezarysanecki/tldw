@@ -7,8 +7,8 @@ import dotenv
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 
-from article.tldr import summarize_article
-from youtube.tldw import summarize_video
+from tldr import summarize_article
+from tldw import summarize_video
 
 app = Flask(__name__)
 app.config['PROXY_URL'] = None  # Default value

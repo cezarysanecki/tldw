@@ -3,7 +3,7 @@ from typing import Dict, Optional, Tuple
 import yt_dlp
 from yt_dlp.utils import YoutubeDLError
 
-from utils.cache import ensure_cache_dir, create_cache_json, reuse_cache_json
+from cache import ensure_cache_dir, create_cache_json, reuse_cache_json
 
 
 class YoutubeVideoInfoExtractor:

@@ -1,6 +1,6 @@
 from openai import OpenAI
 
-from utils.cache import ensure_cache_dir, create_cache_json, reuse_cache_json
+from cache import ensure_cache_dir, create_cache_json, reuse_cache_json
 
 
 class ArticleContentSummarizer:

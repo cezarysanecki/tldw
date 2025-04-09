@@ -4,8 +4,8 @@ from typing import Dict, Optional
 import requests
 import webvtt
 
-from utils.cache import reuse_cache_txt, ensure_cache_dir, create_cache_txt
-from utils.time_utils import ts_to_secs, seconds_to_timestamp, timestamp_to_seconds
+from cache import reuse_cache_txt, ensure_cache_dir, create_cache_txt
+from time_utils import ts_to_secs, seconds_to_timestamp, timestamp_to_seconds
 
 
 class YoutubeVideoCaptionsExtractor:

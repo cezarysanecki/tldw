@@ -1,5 +1,5 @@
 import sys
-from youtube.tldw import summarize_video
+from tldw import summarize_video
 
 url = sys.argv[1]
 
