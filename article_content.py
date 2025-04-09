@@ -10,8 +10,7 @@ class ArticleContentExtractor:
         try:
             response = requests.get(url)
             response.raise_for_status()
-            self.soap = BeautifulSoup(response.text, 'html.parser')
-            print("=== INITIALIZED SOUP ===")
+            self.soup = BeautifulSoup(response.text, 'html.parser')
         except requests.exceptions.RequestException as e:
             print(f"Error while downloading page content: {e}")
             raise e
