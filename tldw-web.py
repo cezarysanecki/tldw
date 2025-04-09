@@ -54,6 +54,27 @@ def rate_limit(limit=5):  # 60 requests per minute by default
 def health_check():
     return jsonify({"status": "healthy"}), 200
 
+@app.route('/api/article/summarize', methods=['POST'])
+@rate_limit()
+def summarize_article():
+    try:
+        data = request.get_json()
+
+        if not data or 'url' not in data:
+            return jsonify({
+                "error": "Missing URL in request body"
+            }), 400
+
+        url = data['url']
+
+        return jsonify(summarize_article(url)), 200
+    except Exception as e:
+        app.logger.error(f"Error processing video: {str(e)}")
+        app.logger.error(traceback.format_exc())
+        return jsonify({
+            "error": f"An error occurred: {str(e)}"
+        }), 500
+
 @app.route('/api/summarize', methods=['POST'])
 @rate_limit()
 def summarize_video_api():
