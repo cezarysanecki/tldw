@@ -7,7 +7,7 @@ def summarize_article(url):
     article_metadata = article_content_extractor.run()
 
     article_content_summarizer = ArticleContentSummarizer
-    article_content_summarizer.summarize(article_metadata['article_title'], article_metadata['article_content'])
+    article_content_summarizer.summarize(article_metadata['title'], article_metadata['content'])
 
     title = article_content_summarizer['title']
     paragraph = article_content_summarizer['paragraph']
