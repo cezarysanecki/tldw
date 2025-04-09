@@ -1,26 +1,24 @@
-from urllib.parse import quote_plus
-
 from openai import OpenAI
 
-from cache import ensure_cache_dir, create_cache_json, reuse_cache_json
+from utils.cache import ensure_cache_dir, create_cache_json, reuse_cache_json
 
 
-class YoutubeSummarizer:
+class ArticleContentSummarizer:
     def __init__(self):
         ensure_cache_dir()
 
         self.client = OpenAI()
         self.messages = []
 
-    def summarize(self, video_id, subtitles, video_title, video_description):
-        print("=== SUMMARIZING VIDEO ===")
+    def summarize(self, article_title, article_content):
+        print("=== SUMMARIZING ARTICLE ===")
 
-        result = reuse_cache_json(f'{video_id}_response')
+        result = reuse_cache_json(f'{article_title}_response')
         if result:
             return result
 
         paragraph = self.__ask_assistant_persisting(
-            f"Summarize this video given its subtitles into increasing levels of conciseness. Begin by summarizing it into a single paragraph.\nTitle: {video_title}\nDescription:\n```{video_description}```\n\nDo not describe or mention the video itself. Simply summarize the points it makes. Focus on the overall or underlying takeaway, cause, reason, or answer BEYOND what's already in the title and description, which is already shown to the user. PROVIDE NO OTHER OUTPUT OTHER THAN THE PARAGRAPH.\nSubtitles follow: {subtitles}")
+            f"Summarize this article given its content into increasing levels of conciseness. Begin by summarizing it into a single paragraph.\nTitle: {article_title}\nContent: \n```{article_content}```\n\nDo not describe or mention the article itself. Simply summarize the points it makes. Focus on the overall or underlying takeaway, cause, reason, or answer BEYOND what's already in the title and description, which is already shown to the user. PROVIDE NO OTHER OUTPUT OTHER THAN THE PARAGRAPH.")
         # sentence = self.__ask_assistant_persisting(
         #     "Now summarize it into a single sentence. Focus on the overall or underlying takeaway, cause, reason, or answer BEYOND what's already in the title and description, which is already shown to the user. Basically, provide a single sentence answer to the question the video poses. PROVIDE NO OTHER OUTPUT OTHER THAN THE SENTENCE.")
         # question = self.__ask_assistant_persisting(
@@ -33,7 +31,7 @@ class YoutubeSummarizer:
             f"Translate below text from English to Polish. Under no circumstances DO NOT change content, just provide translation.\n---\n{paragraph}")
 
         response = {
-            'title': video_title,
+            'title': article_title,
             'paragraph': paragraph,
             'paragraph_pl': paragraph_pl,
             # 'sentence': sentence,
@@ -42,7 +40,7 @@ class YoutubeSummarizer:
             # 'wikipedia': 'https://en.wikipedia.org/w/index.php?search=' + quote_plus(search_term)
         }
 
-        create_cache_json(f'{video_id}_response', response)
+        create_cache_json(f'{article_title}_response', response)
 
         return response
 

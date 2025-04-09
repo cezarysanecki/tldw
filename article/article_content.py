@@ -25,7 +25,6 @@ class ArticleContentExtractor:
         }
 
     def __find_title(self):
-        title = ""
         if self.soup.find('h1'):
             print("Found 'h1' element")
             title = self.soup.find('h1').get_text()

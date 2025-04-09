@@ -1,6 +1,6 @@
-from youtube import YoutubeVideoInfoExtractor
-from youtube_captions import YoutubeVideoCaptionsExtractor
-from youtube_summarizer import YoutubeSummarizer
+from youtube.youtube_info import YoutubeVideoInfoExtractor
+from youtube.youtube_captions import YoutubeVideoCaptionsExtractor
+from youtube.youtube_summarizer import YoutubeSummarizer
 
 
 def summarize_video(url):

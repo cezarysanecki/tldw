@@ -1,12 +1,13 @@
+import os
+import time
+import traceback
+from functools import wraps
+
+import dotenv
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-from functools import wraps
-import time
-import dotenv
-from typing import Optional, Dict, Any
-import os
-from tldw import summarize_video
-import traceback
+
+from youtube.tldw import summarize_video
 
 app = Flask(__name__)
 app.config['PROXY_URL'] = None  # Default value
@@ -18,7 +19,7 @@ CORS(app, resources={
     r"/api/*": {
         "origins": [
             "https://tldw.tube",
-            "http://localhost:5173", # for local development
+            "http://localhost:5173",  # for local development
         ],
         "methods": ["GET", "POST", "OPTIONS"],
     }
@@ -26,6 +27,7 @@ CORS(app, resources={
 
 # Load environment variables
 dotenv.load_dotenv()
+
 
 # Rate limiting decorator
 def rate_limit(limit=5):  # 60 requests per minute by default
@@ -47,12 +49,16 @@ def rate_limit(limit=5):  # 60 requests per minute by default
 
             requests.setdefault(ip, []).append(now)
             return f(*args, **kwargs)
+
         return wrapped
+
     return decorator
+
 
 @app.route('/api/health', methods=['GET'])
 def health_check():
     return jsonify({"status": "healthy"}), 200
+
 
 @app.route('/api/article/summarize', methods=['POST'])
 @rate_limit()
@@ -75,6 +81,7 @@ def summarize_article():
             "error": f"An error occurred: {str(e)}"
         }), 500
 
+
 @app.route('/api/summarize', methods=['POST'])
 @rate_limit()
 def summarize_video_api():
@@ -96,12 +103,15 @@ def summarize_video_api():
             "error": f"An error occurred: {str(e)}"
         }), 500
 
+
 if __name__ == '__main__':
     from waitress import serve
     import argparse
+
     parser = argparse.ArgumentParser(description='Server configuration')
     parser.add_argument('--port', type=int, default=5000, help='Port number (default: 5000)')
-    parser.add_argument('--proxy', default=os.getenv('PROXY_URL'), help='Proxy URL (default: PROXY_URL environment variable or None)')
+    parser.add_argument('--proxy', default=os.getenv('PROXY_URL'),
+                        help='Proxy URL (default: PROXY_URL environment variable or None)')
     args = parser.parse_args()
     app.config['PROXY_URL'] = args.proxy
     print(f'Serving on port {args.port}')
