@@ -65,6 +65,7 @@ def health_check():
 def summarize_article():
     try:
         data = request.get_json()
+        print(f"Handling: {data}")
 
         if not data or 'url' not in data:
             return jsonify({
