@@ -37,9 +37,9 @@ class YoutubeVideoInfoExtractor:
         print("=== GATHERING VIDEO INFO ===")
         try:
             video_id = yt_dlp.extractor.youtube.YoutubeIE.extract_id(url)
-        except YoutubeDLError:
-            print(f"Failed to download video info for {url}")
-            return None, None
+        except YoutubeDLError as e:
+            print(f"Failed to download video info for {url}: {str(e)}")
+            raise Exception(f"Cannot extract id for {url}")
 
         result = reuse_cache_json(video_id)
         if result:
@@ -51,7 +51,7 @@ class YoutubeVideoInfoExtractor:
                 video_info = ydl.extract_info(url, download=False)
         except YoutubeDLError as e:
             print(f"Error extracting video information: {str(e)}")
-            return None, None
+            raise Exception(f"Cannot extract info for {url}")
 
         duration = video_info.get('duration')
         print(f'Video id: {video_id}, duration: {duration} = {duration // 60}:{duration % 60:02}')

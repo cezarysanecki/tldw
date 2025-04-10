@@ -6,8 +6,9 @@ from youtube_summarizer import YoutubeSummarizer
 def summarize_video(url):
     # Download metadata
     youtube_video_info_extractor = YoutubeVideoInfoExtractor()
-    video_info = youtube_video_info_extractor.extract_video_info(url)
-    if not video_info:
+    try:
+        video_info = youtube_video_info_extractor.extract_video_info(url)
+    except Exception:
         return {"error": "Failed to download video info"}
 
     video_id = video_info.get('id')
