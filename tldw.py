@@ -8,8 +8,8 @@ def summarize_video(url):
     youtube_video_info_extractor = YoutubeVideoInfoExtractor()
     try:
         video_info = youtube_video_info_extractor.extract_video_info(url)
-    except Exception:
-        return {"error": "Failed to download video info"}
+    except Exception as e:
+        return {"error": f"Failed to download video info: {str(e)}"}
 
     video_id = video_info.get('id')
     duration = video_info.get('duration')
