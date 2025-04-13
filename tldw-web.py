@@ -61,7 +61,7 @@ def health_check():
     return jsonify({"status": "healthy"}), 200
 
 
-@app.route('/api/article/summarize', methods=['POST'])
+@app.route('/api/summarize/article', methods=['POST'])
 @rate_limit()
 def handle_summarize_article():
     try:
@@ -84,9 +84,9 @@ def handle_summarize_article():
         }), 500
 
 
-@app.route('/api/summarize', methods=['POST'])
+@app.route('/api/summarize/youtube', methods=['POST'])
 @rate_limit()
-def handle_summarize_video():
+def handle_summarize_youtube():
     try:
         data = request.get_json()
 
