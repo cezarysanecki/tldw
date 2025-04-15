@@ -9,7 +9,7 @@ def summarize_article(url):
     content = article_metadata['content']
 
     article_content_summarizer = ArticleContentSummarizer()
-    article_info = article_content_summarizer.summarize(title, content)
+    article_info = article_content_summarizer.summarize(url, title, content)
     title = article_info['title']
     paragraph = article_info['paragraph']
     paragraph_pl = article_info['paragraph_pl']

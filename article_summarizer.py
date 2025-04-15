@@ -10,10 +10,10 @@ class ArticleContentSummarizer:
         self.client = OpenAI()
         self.messages = []
 
-    def summarize(self, article_title, article_content):
+    def summarize(self, url, article_title, article_content):
         print("=== SUMMARIZING ARTICLE ===")
 
-        result = reuse_cache_json(f'{article_title}_response')
+        result = reuse_cache_json(f'{url}_response')
         if result:
             return result
 
